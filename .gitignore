@@ -1,0 +1,23 @@
+# Gizli bilgiler
+.env
+gemini_key.txt
+*.key
+*.crt
+*.pem
+
+# Spotify token önbelleği
+.cache
+.cache-*
+
+# Kişisel veriler ve geçici dosyalar
+temel_hafiza.json
+notlar.txt
+vision_temp.png
+*.wav
+*.mp3
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
