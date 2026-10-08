@@ -36,6 +36,27 @@ Ekran analizi için Gemini kullanılıyorsa anahtarı `gemini_key.txt` dosyasın
 2. `tailscale cert <alan-adin>` ile sertifika al, `.crt` ve `.key` dosyalarını `temel.py` ile aynı klasöre koy.
 3. Telefonda `https://<alan-adin>:5005` adresini aç.
 
+## Sana özel ayarlar (kendi bilgisayarına göre değiştir)
+
+TEMEL ilk olarak yazarın kendi bilgisayarı için yapıldı. Bu yüzden aşağıdaki yerleri kendi kullanımına göre düzenlemen gerekebilir. Satır numaraları yaklaşıktır, `Ctrl+F` ile arayabilirsin.
+
+| Ne | Nerede arayacaksın | Ne yapmalısın |
+|---|---|---|
+| **Sadece Windows** | `winreg`, `winsound`, `winsdk` | Linux ve macOS'ta çalışmaz |
+| **Konum / hava durumu** | `41.0082`, `"Istanbul"` | Koordinatları ve varsayılan şehri kendi şehrinle değiştir (`hava_durumu_al`, `hava_durumu_getir`) |
+| **Steam oyunları** | `STEAM_OYUNLARI` | Oyun adı ve Steam ID eşleşmelerini kendi oyunlarına göre düzenle |
+| **Masaüstü kısayolları** | `.lnk` yazan sözlükler (`valorant`, `discord`, `netflix` vb.) | Değerleri masaüstündeki kısayol adlarınla aynı yap. Kısayolun yoksa o komut çalışmaz |
+| **Opera GX yolu** | `Opera GX\launcher.exe` | Farklı tarayıcı veya farklı kurulum yolu kullanıyorsan değiştir |
+| **Not ve hafıza dosyaları** | `notlar.txt`, `temel_hafiza.json` | Masaüstüne kaydedilir. Başka yer istersen `NOT_DOSYASI` ve `HAFIZA_DOSYASI` satırlarını düzenle |
+| **Ses** | `tr-TR-AhmetNeural` | Başka bir `edge-tts` sesi seçebilirsin |
+| **Konuşma dili** | Kod ve komutlar Türkçe | Başka dilde kullanmak için komut metinlerini çevirmen gerekir |
+
+### Hangi anahtarlar zorunlu?
+
+- **`GROQ_API_KEY`** zorunlu. Olmazsa TEMEL açılmaz.
+- **TomTom, Gemini, Spotify** isteğe bağlı. Anahtarı yoksa sadece o özellikler çalışmaz, geri kalanı çalışır.
+- **Telefon kontrolü** isteğe bağlı. `TEMEL_TELEFON_SIFRE` tanımlı değilse sunucu hiç başlamaz.
+
 ## Lisans
 
 MIT, bkz. `LICENSE`.
