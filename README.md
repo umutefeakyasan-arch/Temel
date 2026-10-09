@@ -153,6 +153,8 @@ python temel.py
 | `TEMEL_TELEFON_HOST` | Telefon için | Sunucunun bağlanacağı IP (Tailscale IP'n) |
 | `TAILSCALE_MAGICDNS_ADI` | HTTPS için | `tailscale cert` ile alınan alan adı |
 | `SPOTIPY_*` | Hayır | Spotify entegrasyonu |
+| `ASISTAN_ADI` | Hayır | Asistanın adı (varsayılan: Temel) |
+| `ASISTAN_EK_KELIMELER` | Hayır | Uyandırma için ek yazımlar, virgülle |
 
 Ekran analizi için Gemini kullanılıyorsa anahtarı `gemini_key.txt` dosyasına yaz (bu dosya `.gitignore`'dadır).
 
@@ -183,6 +185,22 @@ TEMEL ilk olarak yazarın kendi bilgisayarı için yapıldı. Bu yüzden aşağ�
 - **`GROQ_API_KEY`** zorunlu. Olmazsa TEMEL açılmaz.
 - **TomTom, Gemini, Spotify** isteğe bağlı. Anahtarı yoksa sadece o özellikler çalışmaz, geri kalanı çalışır.
 - **Telefon kontrolü** isteğe bağlı. `TEMEL_TELEFON_SIFRE` tanımlı değilse sunucu hiç başlamaz.
+
+## Asistanın adını değiştirme
+
+Varsayılan ad **Temel**. Kodu açmana gerek kalmadan adı değiştirebilirsin. PowerShell'de:
+
+```
+setx ASISTAN_ADI "Athena"
+setx ASISTAN_EK_KELIMELER "atena,atina,atene"
+```
+
+PowerShell'i kapatıp yeniden aç ve TEMEL'i yeniden başlat. Bu ayar şunları değiştirir: uyandırma kelimesi, arayüz başlığı, sohbet etiketi ve yapay zekânın kendini tanıtma şekli.
+
+- `ASISTAN_EK_KELIMELER` isteğe bağlıdır. Ses tanıma ismi farklı yazabilir (örneğin "Athena" yerine "Atina"). Konsolda programın ne duyduğuna bak, yanlış yazımları buraya ekle.
+- Eski adına dönmek için: `setx ASISTAN_ADI "Temel"`.
+- Dosya ve fonksiyon adları (`temel.py` vb.) değişmez, bunlara dokunma.
+- Projeyi kendi sürümün olarak paylaşacaksan `LICENSE` dosyasını koru ve orijinal projeyi belirt (MIT lisansı şartı).
 
 ## Lisans
 
