@@ -91,6 +91,21 @@ if not GROQ_API_KEY:
     raise SystemExit("HATA: GROQ_API_KEY ortam değişkeni tanımlı değil. .env.example dosyasına bak.")
 groq_client = Groq(api_key=GROQ_API_KEY)
 
+# --- ASİSTAN ADI (isim değiştirmek için sadece bu bölüme bak) ---
+# İsim değiştirmek için ortam değişkeni tanımla, örneğin:  setx ASISTAN_ADI "Athena"
+# Whisper ismi farklı yazabilir; yanlış duyulan yazımları virgülle ekleyebilirsin:
+#   setx ASISTAN_EK_KELIMELER "atena,atina,atene"
+ASISTAN_ADI = (os.getenv("ASISTAN_ADI") or "Temel").strip()
+_EK_KELIMELER = [k.strip().lower() for k in (os.getenv("ASISTAN_EK_KELIMELER") or "").split(",") if k.strip()]
+if ASISTAN_ADI.lower() == "temel":
+    TETIKLEYICI_KELIMELER = ["temel", "temeli", "temem", "temed"] + _EK_KELIMELER
+    HUD_BASLIK = "T.E.M.E.L."
+    KIMLIK_CUMLESI = "Sen T.E.M.E.L.'sin (Teknolojik Entegre Mantıksal Elektronik Lider)."
+else:
+    TETIKLEYICI_KELIMELER = [ASISTAN_ADI.lower()] + _EK_KELIMELER
+    HUD_BASLIK = ASISTAN_ADI.upper()
+    KIMLIK_CUMLESI = f"Senin adın {ASISTAN_ADI}."
+
 # Groq tarafında güncel ve aktif model
 GROQ_MODEL = "openai/gpt-oss-120b"
 GROQ_VISION_MODEL = "qwen/qwen3.8-27b"  # Vision/ekran analizi için - hesabında erişilemezse burayı değiştir
@@ -414,7 +429,7 @@ class TemelJarvisHUD(QWidget):
         input_layout = QHBoxLayout()
         
         self.input_field = QLineEdit()
-        self.input_field.setPlaceholderText("TEMEL'e mesaj yazın...")
+        self.input_field.setPlaceholderText(f"{ASISTAN_ADI} için mesaj yazın...")
         self.input_field.returnPressed.connect(self.send_text_message)
         input_layout.addWidget(self.input_field)
 
@@ -685,7 +700,7 @@ class TemelJarvisHUD(QWidget):
         # 7. Merkez Başlık Yazısı
         painter.setPen(QPen(QColor(255, 255, 255)))
         painter.setFont(QFont("Consolas", 18, QFont.Bold))
-        text = "INCOMING CALL" if self.status_mode == "CALL" else "T.E.M.E.L."
+        text = "INCOMING CALL" if self.status_mode == "CALL" else HUD_BASLIK
         fm = QFontMetrics(painter.font())
         text_w = fm.width(text)
         text_h = fm.height()
@@ -803,11 +818,11 @@ durum = AsistanDurumu()
 SES_KILIDI = threading.Lock()
 
 def temel_konus(metin, sesli=True):
-    print(f"\nTEMEL: {metin}")
+    print(f"\n{ASISTAN_ADI.upper()}: {metin}")
     if hud:
         if hud.status_mode != "CALL":
             ui_bridge.status_signal.emit("SPEAKING", metin)
-        ui_bridge.chat_append_signal.emit("TEMEL", metin)
+        ui_bridge.chat_append_signal.emit(ASISTAN_ADI.upper(), metin)
 
     if not sesli:
         if hud and hud.status_mode != "CALL":
@@ -2040,7 +2055,7 @@ def yapay_zekaya_sor(soru):
 
         # TEMEL - JARVIS KİŞİLİK VE ZEKA PROMPT'U
         SYSTEM_PROMPT = f"""
-Sen T.E.M.E.L.'sin (Teknolojik Entegre Mantıksal Elektronik Lider). 
+{KIMLIK_CUMLESI}
 Kullanıcının kişisel, ultra hızlı, son derece zeki, pratik ve esprili yapay zekâ asistanısın.
 Bugünün Tarihi ve Saati: {bugun_str}
 
@@ -3199,7 +3214,7 @@ def asistan_dongusu():
             
                 if durum.force_listen_flag:
                     durum.force_listen_flag = False
-                    duyulan_metin = "temel"
+                    duyulan_metin = TETIKLEYICI_KELIMELER[0]
                 else:
                     duyulan_metin = groq_whisper_dinle()
 
@@ -3207,7 +3222,7 @@ def asistan_dongusu():
             if not duyulan_metin:
                 continue
 
-            tetikleyici_kelimeler = ["temel", "temeli", "temem", "temed"]
+            tetikleyici_kelimeler = TETIKLEYICI_KELIMELER
             if any(k in duyulan_metin.lower() for k in tetikleyici_kelimeler):
                 komut = duyulan_metin.lower()
                 for k in tetikleyici_kelimeler: 
@@ -3363,7 +3378,7 @@ if FLASK_MEVCUT:
 
     @telefon_app.route("/")
     def telefon_ana_sayfa():
-        return TELEFON_SAYFA_HTML
+        return TELEFON_SAYFA_HTML.replace("T.E.M.E.L.", HUD_BASLIK)
 
     @telefon_app.route("/komut", methods=["POST"])
     def telefon_komut_al():
@@ -3380,7 +3395,7 @@ if FLASK_MEVCUT:
 
         try:
             threading.Thread(target=yazili_komut_isle, args=(komut,), daemon=True).start()
-            return jsonify({"cevap": f"'{komut}' komutu Temel'e iletildi. Cevabı bilgisayarın hoparlöründen duyacaksın."})
+            return jsonify({"cevap": f"'{komut}' komutu asistana iletildi. Cevabı bilgisayarın hoparlöründen duyacaksın."})
         except Exception as e:
             return jsonify({"cevap": f"Hata: {e}"}), 500
 
