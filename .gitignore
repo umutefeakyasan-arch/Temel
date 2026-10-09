@@ -11,6 +11,9 @@ gemini_key.txt
 
 # Kişisel veriler ve geçici dosyalar
 temel_hafiza.json
+temel_hafiza.db
+*.db
+*_grid.png
 notlar.txt
 vision_temp.png
 *.wav
